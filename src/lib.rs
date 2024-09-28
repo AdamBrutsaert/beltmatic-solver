@@ -4,6 +4,7 @@ enum Operation {
     Identity(i64),
     Addition(i64, i64),
     Multiplication(i64, i64),
+    Substraction(i64, i64),
 }
 
 pub struct FastSolver {
@@ -37,6 +38,7 @@ impl FastSolver {
                     for (result, operation) in [
                         (a.checked_add(b), Operation::Addition(a, b)),
                         (a.checked_mul(b), Operation::Multiplication(a, b)),
+                        (a.checked_sub(b), Operation::Substraction(a, b)),
                     ] {
                         if let Some(result) = result {
                             if !self.cache.contains_key(&result) {
@@ -59,6 +61,7 @@ impl FastSolver {
             Operation::Identity(x) => format!("{}", x),
             Operation::Addition(a, b) => format!("({} + {})", self.format_solution(*a), b),
             Operation::Multiplication(a, b) => format!("({} * {})", self.format_solution(*a), b),
+            Operation::Substraction(a, b) => format!("({} - {})", self.format_solution(*a), b),
         }
     }
 
