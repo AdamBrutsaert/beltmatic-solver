@@ -1,20 +1,9 @@
 use std::collections::HashMap;
 
-#[derive(Copy, Clone, Debug)]
-pub enum Operation {
+enum Operation {
     Identity(i64),
     Addition(i64, i64),
     Multiplication(i64, i64),
-}
-
-impl Operation {
-    fn symbol(&self) -> char {
-        match self {
-            Operation::Identity(_) => ' ',
-            Operation::Addition(_, _) => '+',
-            Operation::Multiplication(_, _) => '*',
-        }
-    }
 }
 
 pub struct FastSolver {
@@ -68,12 +57,8 @@ impl FastSolver {
     fn format_solution(&self, target: i64) -> String {
         match self.cache.get(&target).unwrap() {
             Operation::Identity(x) => format!("{}", x),
-            operation @ Operation::Addition(a, b) => {
-                format!("{} {} {}", self.format_solution(*a), operation.symbol(), b)
-            }
-            operation @ Operation::Multiplication(a, b) => {
-                format!("{} {} {}", self.format_solution(*a), operation.symbol(), b)
-            }
+            Operation::Addition(a, b) => format!("({} + {})", self.format_solution(*a), b),
+            Operation::Multiplication(a, b) => format!("({} * {})", self.format_solution(*a), b),
         }
     }
 
