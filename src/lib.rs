@@ -1,20 +1,23 @@
 use std::collections::HashMap;
 
+pub type Value = u32;
+
 enum Operation {
-    Identity(i64),
-    Addition(i64, i64),
-    Multiplication(i64, i64),
-    Substraction(i64, i64),
+    Identity(Value),
+    Addition(Value, Value),
+    Multiplication(Value, Value),
+    Substraction(Value, Value),
+    Exponentiation(Value, Value),
 }
 
 pub struct FastSolver {
-    base: Vec<i64>,
-    inputs: Vec<i64>,
-    cache: HashMap<i64, Operation>,
+    base: Vec<Value>,
+    inputs: Vec<Value>,
+    cache: HashMap<Value, Operation>,
 }
 
 impl FastSolver {
-    pub fn new(base: Vec<i64>) -> FastSolver {
+    pub fn new(base: Vec<Value>) -> FastSolver {
         let inputs = base.clone();
         let cache = inputs
             .iter()
@@ -28,7 +31,7 @@ impl FastSolver {
         }
     }
 
-    fn iterate_until(&mut self, target: i64) {
+    fn iterate_until(&mut self, target: Value) {
         'main: loop {
             for i in 0..self.inputs.len() {
                 for j in 0..self.base.len() {
@@ -39,6 +42,7 @@ impl FastSolver {
                         (a.checked_add(b), Operation::Addition(a, b)),
                         (a.checked_mul(b), Operation::Multiplication(a, b)),
                         (a.checked_sub(b), Operation::Substraction(a, b)),
+                        (a.checked_pow(b), Operation::Exponentiation(a, b)),
                     ] {
                         if let Some(result) = result {
                             if !self.cache.contains_key(&result) {
@@ -56,16 +60,17 @@ impl FastSolver {
         }
     }
 
-    fn format_solution(&self, target: i64) -> String {
+    fn format_solution(&self, target: Value) -> String {
         match self.cache.get(&target).unwrap() {
             Operation::Identity(x) => format!("{}", x),
             Operation::Addition(a, b) => format!("({} + {})", self.format_solution(*a), b),
             Operation::Multiplication(a, b) => format!("({} * {})", self.format_solution(*a), b),
             Operation::Substraction(a, b) => format!("({} - {})", self.format_solution(*a), b),
+            Operation::Exponentiation(a, b) => format!("({} ^ {})", self.format_solution(*a), b),
         }
     }
 
-    pub fn solve(&mut self, target: i64) -> String {
+    pub fn solve(&mut self, target: Value) -> String {
         self.iterate_until(target);
         self.format_solution(target)
     }
