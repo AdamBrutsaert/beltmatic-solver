@@ -1,4 +1,4 @@
-use beltmatic::{FastSolver, Value};
+use beltmatic::{FastSolver, FullSolver, Value};
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -20,9 +20,23 @@ struct Args {
         help = "The base numbers to use"
     )]
     base: Vec<Value>,
+
+    #[arg(
+        short,
+        long,
+        help = "Use a faster algorithm but with only one solution"
+    )]
+    fast: bool,
 }
 
 fn main() {
     let args = Args::parse();
-    println!("{}", FastSolver::new(args.base).solve(args.target));
+
+    if args.fast {
+        println!("{}", FastSolver::new(args.base).solve(args.target));
+    } else {
+        for solution in FullSolver::new(args.base).solve(args.target) {
+            println!("{}", solution);
+        }
+    }
 }
